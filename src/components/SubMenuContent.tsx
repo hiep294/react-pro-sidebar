@@ -3,6 +3,7 @@ import styled, { CSSObject } from '@emotion/styled';
 import { StyledUl } from '../styles/StyledUl';
 import { menuClasses } from '../utils/utilityClasses';
 import { useMenu } from '../hooks/useMenu';
+import { createPortal } from 'react-dom';
 
 interface SubMenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   transitionDuration?: number;
@@ -60,7 +61,7 @@ const SubMenuContentFR: React.ForwardRefRenderFunction<HTMLDivElement, SubMenuCo
   const { transitionDuration } = useMenu();
   const [defaultOpenState] = React.useState(defaultOpen);
 
-  return (
+  const render = (
     <StyledSubMenuContent
       data-testid={`${menuClasses.subMenuContent}-test-id`}
       ref={ref}
@@ -75,6 +76,14 @@ const SubMenuContentFR: React.ForwardRefRenderFunction<HTMLDivElement, SubMenuCo
       <StyledUl>{children}</StyledUl>
     </StyledSubMenuContent>
   );
+
+  if (firstLevel && collapsed) {
+    {createPortal(
+      render,
+      document.body
+    )}
+  }
+  return render
 };
 
 export const SubMenuContent = React.forwardRef(SubMenuContentFR);
